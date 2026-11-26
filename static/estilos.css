@@ -75,12 +75,44 @@ small, .meta { color: var(--suave); }
 .gestion { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
 .vacio, .aviso { padding: 13px 16px; background: #e9eee2; border-radius: 8px; }
 .error { background: #f7e4da; color: #692c1f; }
+.nota { color: var(--suave); font-size: 14px; }
+.clasificacion { margin-top: 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 22px; align-items: center; }
+.clasificacion h2, .plan-anual > h2 { font: 500 clamp(30px, 4vw, 42px)/1.08 Georgia, serif; margin: 8px 0; letter-spacing: -.03em; }
+.lista-puntos, .lista-simple { list-style: none; padding: 0; margin: 0; }
+.lista-puntos li, .lista-simple li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--borde); }
+.lista-puntos li:last-child, .lista-simple li:last-child { border-bottom: 0; }
+.lista-puntos li > span:nth-child(2) { overflow-wrap: anywhere; }
+.puesto { display: grid; place-items: center; width: 28px; aspect-ratio: 1; border-radius: 50%; background: #e6efdf; color: var(--verde); font-weight: 800; }
+.resumen-semestre { margin-top: 8px; }
+.resumen-cabeza { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px; }
+.resumen-cabeza h2 { font: 500 clamp(32px, 5vw, 48px)/1.08 Georgia, serif; margin: 8px 0; }
+.selector-periodo { display: flex; align-items: center; gap: 8px; }
+.selector-periodo label { white-space: nowrap; }
+.selector-periodo select { min-width: 170px; }
+.metricas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+.metricas > div { display: flex; flex-direction: column; gap: 5px; padding: 15px; border-radius: 10px; background: #edf1e8; }
+.metricas strong { color: var(--verde); font: 600 34px/1 Georgia, serif; }
+.metricas span { color: var(--suave); font-size: 14px; }
+.resumen-detalle { margin-top: 22px; }
+.resumen-detalle h3 { margin-bottom: 8px; }
+.plan-anual { margin-top: 42px; }
+.pasos-campana { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
+.pasos-campana .panel { padding-top: 18px; }
+.numero-paso { display: inline-grid; place-items: center; width: 34px; aspect-ratio: 1; margin-bottom: 14px; border-radius: 50%; background: var(--verde); color: var(--lima); font-size: 13px; font-weight: 800; }
+.pasos-campana h3, .sugerencia-evento h3 { margin-bottom: 8px; }
+.pasos-campana p, .sugerencia-evento p { color: var(--suave); margin-bottom: 0; }
+.sugerencia-evento { margin-top: 14px; }
+.estado-ayuda { margin: -3px 0 10px !important; }
+.estado-ayuda span { display: block; margin-top: 3px; }
 .pie { padding-block: 21px; border-top: 1px solid var(--borde); display: flex; justify-content: space-between; gap: 10px; color: var(--suave); font-size: 13px; }
 @media (max-width: 700px) {
   .ancho { width: calc(100% - 32px); }
   .barra { padding-block: 12px; }
   nav a { padding-inline: 8px; }
-  .portada, .campana, .columnas, .gestion { grid-template-columns: 1fr; }
+  .portada, .campana, .columnas, .gestion, .clasificacion, .pasos-campana { grid-template-columns: 1fr; }
   .impacto { min-height: 180px; }
   .campana, .columnas { gap: 18px; }
+  .metricas { grid-template-columns: repeat(2, 1fr); }
+  .resumen-cabeza { align-items: stretch; }
+  .selector-periodo { align-items: stretch; flex-direction: column; }
 }

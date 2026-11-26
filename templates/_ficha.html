@@ -1,7 +1,11 @@
 <div class="ficha-cabeza">
-  <span class="meta">Caso #{{ reporte.id }} · {{ reporte.categoria }}</span>
+  <span class="meta">Caso #{{ reporte.id }} · {{ reporte.categoria }} · Recibido {{ reporte.creado[:16] }}</span>
   <span class="estado {{ {'Pendiente':'pendiente', 'En proceso':'proceso', 'Resuelto':'resuelto'}[reporte.estado] }}">{{ reporte.estado }}</span>
 </div>
+<p class="nota estado-ayuda">
+  {% if reporte.estado == 'Pendiente' %}Reporte recibido; está pendiente de revisión.{% elif reporte.estado == 'En proceso' %}El equipo ya está dando seguimiento a este caso.{% else %}Caso marcado como resuelto por el equipo de mantenimiento.{% endif %}
+  {% if reporte.actualizado and reporte.actualizado != reporte.creado %}<span>Última actualización: {{ reporte.actualizado[:16] }}</span>{% endif %}
+</p>
 <h3>{{ reporte.titulo }}</h3>
 <p><strong>{{ reporte.ubicacion }}</strong></p>
 <p>{{ reporte.descripcion }}</p>

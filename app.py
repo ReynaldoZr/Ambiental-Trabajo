@@ -1,6 +1,8 @@
 """Rutas de JaguarVerde, un prototipo web local de Educación Ambiental."""
 from io import BytesIO
+from datetime import date, datetime
 from pathlib import Path
+import re
 import secrets
 
 from flask import (
@@ -9,11 +11,11 @@ from flask import (
 )
 from PIL import Image, ImageOps, UnidentifiedImageError
 
-from campana import TEMA
+from campana import FACULTADES, obtener_reto_actual
 from datos import CATEGORIAS, ESTADOS, iniciar_db, obtener_db
 
 
-VERSION = "0.1"
+VERSION = "0.2"
 MAX_FOTO = 5 * 1024 * 1024
 
 
@@ -41,8 +43,9 @@ def preparar_foto(archivo):
 
 def crear_app(ruta_db=None):
     app = Flask(__name__)
+    Path(app.instance_path).mkdir(parents=True, exist_ok=True)
     app.config.update(
-        SECRET_KEY=secrets.token_hex(32),
+        SECRET_KEY=obtener_clave_sesion(Path(app.instance_path)),
         DATABASE=ruta_db or Path(app.instance_path) / "jaguarverde.sqlite",
         MAX_CONTENT_LENGTH=MAX_FOTO + 128 * 1024,
         TRUSTED_HOSTS=["127.0.0.1", "localhost", "[::1]"],
@@ -67,23 +70,58 @@ def crear_app(ruta_db=None):
     def inicio():
         db = obtener_db()
         resueltos = db.execute("SELECT COUNT(*) FROM reporte WHERE estado = 'Resuelto'").fetchone()[0]
-        intento = db.execute("SELECT aciertos FROM intento WHERE reto = ?", (TEMA["id"],)).fetchone()
-        return render_template("inicio.html", tema=TEMA, intento=intento, resueltos=resueltos)
+        tema = obtener_reto_actual()
+        intento = None
+        if session.get("participante_id"):
+            intento = db.execute(
+                "SELECT aciertos, puntos FROM participacion_reto WHERE reto = ? AND participante = ?",
+                (tema["id"], session["participante_id"]),
+            ).fetchone()
+        clasificacion = obtener_clasificacion(db, tema["id"])
+        return render_template("inicio.html", tema=tema, intento=intento,
+                               resueltos=resueltos, clasificacion=clasificacion,
+                               facultades=FACULTADES)
 
     @app.post("/reto")
     def reto():
-        preguntas = TEMA["preguntas"]
+        tema = obtener_reto_actual()
+        preguntas = tema["preguntas"]
         respuestas = [request.form.get(f"respuesta_{i}") for i in range(len(preguntas))]
-        if any(respuesta not in ("0", "1", "2") for respuesta in respuestas):
+        facultad = request.form.get("facultad", "")
+        if facultad not in FACULTADES:
+            flash("Selecciona tu facultad o unidad académica para participar.", "error")
+        elif any(respuesta not in ("0", "1", "2") for respuesta in respuestas):
             flash("Responde las tres preguntas para completar el reto.", "error")
         else:
             aciertos = sum(int(respuesta) == pregunta[2]
                            for respuesta, pregunta in zip(respuestas, preguntas))
+            participante = session.get("participante_id")
+            if not participante:
+                participante = secrets.token_urlsafe(24)
+                session["participante_id"] = participante
             db = obtener_db()
             with db:
-                db.execute("INSERT OR IGNORE INTO intento (reto, aciertos) VALUES (?, ?)",
-                           (TEMA["id"], aciertos))
+                guardado = db.execute(
+                    """INSERT OR IGNORE INTO participacion_reto
+                       (reto, participante, facultad, aciertos, puntos)
+                       VALUES (?, ?, ?, ?, ?)""",
+                    (tema["id"], participante, facultad, aciertos, aciertos * 10),
+                )
+            if guardado.rowcount:
+                flash(f"¡Reto completado! Sumaste {aciertos * 10} puntos para tu facultad.", "exito")
+            else:
+                flash("Ya participaste en el reto de esta semana.", "aviso")
         return redirect(url_for("inicio", _anchor="reto"))
+
+    @app.get("/campana")
+    def campana():
+        db = obtener_db()
+        periodos = listar_periodos(db)
+        solicitado = request.args.get("periodo", "")
+        periodo = next((p for p in periodos if p["id"] == solicitado), periodos[0])
+        resumen = obtener_resumen_semestre(db, periodo)
+        return render_template("campana.html", periodo=periodo, periodos=periodos,
+                               resumen=resumen)
 
     @app.route("/reportes", methods=["GET", "POST"])
     def reportes():
@@ -130,7 +168,7 @@ def crear_app(ruta_db=None):
             db = obtener_db()
             with db:
                 cambio = db.execute(
-                    "UPDATE reporte SET estado = ?, observacion = ? WHERE id = ?",
+                    "UPDATE reporte SET estado = ?, observacion = ?, actualizado = CURRENT_TIMESTAMP WHERE id = ?",
                     (estado, observacion, reporte_id),
                 )
                 if cambio.rowcount == 0:
@@ -157,9 +195,89 @@ def crear_app(ruta_db=None):
 
 def listar_reportes():
     return obtener_db().execute(
-        """SELECT id, titulo, categoria, ubicacion, descripcion, estado, observacion
+        """SELECT id, titulo, categoria, ubicacion, descripcion, estado, observacion, creado, actualizado
            FROM reporte ORDER BY id DESC"""
     ).fetchall()
+
+
+def obtener_clave_sesion(carpeta_instancia):
+    """Conserva la identidad anónima del navegador entre reinicios locales."""
+    archivo = carpeta_instancia / ".clave_jaguarverde"
+    try:
+        return archivo.read_text(encoding="utf-8").strip()
+    except FileNotFoundError:
+        clave = secrets.token_hex(32)
+        try:
+            with archivo.open("x", encoding="utf-8") as salida:
+                salida.write(clave)
+        except FileExistsError:
+            return archivo.read_text(encoding="utf-8").strip()
+        return clave
+
+
+def obtener_clasificacion(db, reto_id):
+    return db.execute(
+        """SELECT facultad, SUM(puntos) AS puntos, COUNT(*) AS participaciones
+           FROM participacion_reto WHERE reto = ? GROUP BY facultad
+           ORDER BY puntos DESC, facultad COLLATE NOCASE LIMIT 3""",
+        (reto_id,),
+    ).fetchall()
+
+
+def periodo_desde_id(periodo_id):
+    coincidencia = re.fullmatch(r"(\d{4})-([12])", periodo_id or "")
+    if not coincidencia:
+        return None
+    anio, semestre = int(coincidencia.group(1)), int(coincidencia.group(2))
+    inicio = f"{anio}-{'01-01' if semestre == 1 else '07-01'} 00:00:00"
+    fin = f"{anio}-{'07-01' if semestre == 1 else '01-01'} 00:00:00"
+    if semestre == 2:
+        fin = f"{anio + 1}-01-01 00:00:00"
+    return {"id": periodo_id, "etiqueta": f"Semestre {semestre} · {anio}",
+            "inicio": inicio, "fin": fin}
+
+
+def listar_periodos(db):
+    hoy = date.today()
+    actual = f"{hoy.year}-{1 if hoy.month <= 6 else 2}"
+    ids = {actual}
+    filas = db.execute(
+        "SELECT creado FROM reporte UNION ALL SELECT creado FROM participacion_reto"
+    ).fetchall()
+    for fila in filas:
+        try:
+            fecha = datetime.strptime(fila["creado"][:10], "%Y-%m-%d").date()
+        except (ValueError, TypeError):
+            continue
+        ids.add(f"{fecha.year}-{1 if fecha.month <= 6 else 2}")
+    return [periodo_desde_id(periodo_id) for periodo_id in sorted(ids, reverse=True)]
+
+
+def obtener_resumen_semestre(db, periodo):
+    desde, hasta = periodo["inicio"], periodo["fin"]
+    reportes = db.execute(
+        """SELECT estado, COUNT(*) AS cantidad FROM reporte
+           WHERE creado >= ? AND creado < ? GROUP BY estado""", (desde, hasta),
+    ).fetchall()
+    categorias = db.execute(
+        """SELECT categoria, COUNT(*) AS cantidad FROM reporte
+           WHERE creado >= ? AND creado < ? GROUP BY categoria
+           ORDER BY cantidad DESC, categoria COLLATE NOCASE""", (desde, hasta),
+    ).fetchall()
+    participacion = db.execute(
+        """SELECT COUNT(*) AS envios, COUNT(DISTINCT participante) AS personas,
+                  COALESCE(SUM(puntos), 0) AS puntos
+           FROM participacion_reto WHERE creado >= ? AND creado < ?""", (desde, hasta),
+    ).fetchone()
+    puntos = db.execute(
+        """SELECT facultad, SUM(puntos) AS puntos, COUNT(*) AS participaciones
+           FROM participacion_reto WHERE creado >= ? AND creado < ?
+           GROUP BY facultad ORDER BY puntos DESC, facultad COLLATE NOCASE""",
+        (desde, hasta),
+    ).fetchall()
+    estados = {fila["estado"]: fila["cantidad"] for fila in reportes}
+    return {"total_reportes": sum(estados.values()), "estados": estados,
+            "categorias": categorias, "participacion": participacion, "puntos": puntos}
 
 
 if __name__ == "__main__":

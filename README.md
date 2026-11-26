@@ -1,6 +1,6 @@
-# JaguarVerde · versión 0.1
+# JaguarVerde · versión 0.2
 
-Prototipo web para Educación Ambiental. Permite reportar un problema del campus con una foto, actualizar su estado desde la vista de mantenimiento y consultar el resultado. En Inicio hay un consejo y un reto de tres preguntas sobre el agua.
+Prototipo web para Educación Ambiental. Permite reportar problemas ambientales del campus con foto, consultar su estado, completar retos semanales sobre agua, energía y residuos, ver un marcador anónimo por unidad académica y revisar un resumen seleccionable por semestre.
 
 ## Abrir en IntelliJ IDEA
 
@@ -24,19 +24,23 @@ Para ejecutar desde esa misma terminal:
 ## Recorrido para la defensa
 
 1. Desde Inicio, elige **Reportar un problema**. Crea un caso ficticio con una foto JPG, PNG o WebP de hasta 5 MB.
-2. En **Administración**, revisa la foto, marca el caso como **Resuelto** y guarda una observación.
-3. Vuelve a **Reportes** para leer la respuesta. Vuelve a **Inicio** para ver el contador actualizado y probar el reto.
-4. Reinicia la aplicación. El reporte, su estado y el resultado del reto siguen guardados.
+2. En **Administración**, revisa la foto, cambia el estado y guarda una observación.
+3. Vuelve a **Reportes** para consultar el estado y la fecha de actualización. En Inicio, completa el reto y elige una unidad académica; cada acierto suma 10 puntos al marcador de esa semana.
+4. Abre **Campaña** para ver los datos del semestre elegido y la propuesta de actividades universitarias.
+5. Reinicia la aplicación. Los reportes, sus estados y las participaciones del reto siguen guardados.
 
-La base de demostración se crea en `instance/jaguarverde.sqlite` y queda fuera de Git. Incluye las fotos normalizadas y el intento del reto. Las dos vistas se usan en el mismo equipo sin inicio de sesión. Usa datos ficticios.
+La base local se crea en `instance/jaguarverde.sqlite` y queda fuera de Git. Incluye fotos normalizadas y participaciones del reto. Una cookie aleatoria permite que el mismo navegador participe una vez por reto semanal; no se guarda nombre ni correo. Sin inicio de sesión ni validación institucional, el marcador es una demostración: no acredita identidad, asistencia ni horas. Usa datos ficticios.
+
+El resumen muestra reportes por estado y categoría, y puntos de retos por unidad académica. No estima ahorros de agua o energía porque todavía no existe un método validado para calcularlos. El calendario sugerido de retos, actividades y cierres semestrales está en [el plan de campaña](docs/CAMPANA_ANUAL.md). Los periodos enero-junio y julio-diciembre son una convención del prototipo; deben ajustarse al calendario académico de la UAM antes de un piloto.
 
 ## Dónde se hace cada cambio
 
 | Archivo | Responsabilidad |
 | --- | --- |
 | `app.py` | Páginas, formularios y acciones del prototipo. |
-| `datos.py` | Conexión y tablas de SQLite. |
-| `campana.py` | Consejo, preguntas y respuestas del reto. |
+| `datos.py` | Conexión, migración y tablas de SQLite. |
+| `campana.py` | Facultades, preguntas y consejos de los retos rotativos. |
 | `templates/` y `static/` | Pantallas HTML y diseño visual. |
+| `docs/CAMPANA_ANUAL.md` | Cadencia ligera de retos, actividades y resumen semestral. |
 
 Lee [AGENTS.md](AGENTS.md) y [los acuerdos del equipo](docs/ACUERDOS.md) antes de preparar un cambio.

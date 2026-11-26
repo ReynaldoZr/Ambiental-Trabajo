@@ -12,7 +12,7 @@
     <div class="ancho barra">
       <a class="marca" href="{{ url_for('inicio') }}"><span class="sello" aria-hidden="true">J</span> Jaguar<span>Verde</span></a>
       <nav aria-label="Principal">
-        {% for ruta, nombre in [('inicio', 'Inicio'), ('reportes', 'Reportes'), ('administracion', 'Administración')] %}
+        {% for ruta, nombre in [('inicio', 'Inicio'), ('campana', 'Campaña'), ('reportes', 'Reportes'), ('administracion', 'Administración')] %}
           <a href="{{ url_for(ruta) }}" {% if request.endpoint == ruta %}aria-current="page"{% endif %}>{{ nombre }}</a>
         {% endfor %}
       </nav>

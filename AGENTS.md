@@ -2,12 +2,13 @@
 
 JaguarVerde es el prototipo académico de Educación Ambiental. Este archivo aplica a todo el repositorio y sirve tanto para integrantes como para asistentes de IA. Antes de editar, leer el README, la tarea asignada y las decisiones pertinentes en `docs/ACUERDOS.md`.
 
-## Alcance de la versión 0.1
+## Alcance de la versión 0.2
 
 - Usar Python, Flask, HTML, CSS y SQLite. Mantener el código fácil de seguir para el grupo y los cambios pequeños.
-- Las tres vistas son Inicio, Reportes y Administración. El flujo principal permite crear un reporte con foto, actualizar su estado y consultar la respuesta. El reto de tres preguntas otorga puntos simbólicos a la demostración local.
+- Las vistas son Inicio, Campaña, Reportes y Administración. El flujo permite crear un reporte con foto, actualizar su estado y consultar el seguimiento. En Inicio hay un reto breve que rota semanalmente entre agua, energía y residuos, un marcador de puntos por unidad académica y un intento anónimo por navegador y reto.
+- Campaña presenta el resumen semestral de los datos guardados y un plan sugerido de eventos. Los puntos solo reflejan aciertos del reto; no se canjean por horas, becas o servicios.
 - El modo de demostración funciona en el equipo local, con datos ficticios y vistas compartidas sin cuentas. La prioridad es que el equipo pueda explicar y repetir el recorrido en clase.
-- Campañas adicionales, cuentas reales, puntos por reportes, marcador por facultad, evento institucional, canje por horas y despliegue son propuestas futuras. Una tarea nueva debe definir qué se incluye antes de modificar ese alcance.
+- Autenticación, validación de identidad, puntos por reportes, auditoría de incidencias, integraciones institucionales y despliegue quedan fuera de esta versión. Un piloto con personas reales requiere definir responsables, permisos y calendario con la universidad.
 
 ## Trabajo en GitHub
 
@@ -18,7 +19,7 @@ JaguarVerde es el prototipo académico de Educación Ambiental. Este archivo apl
 5. Abrir un PR hacia `main`, enlazar la issue y explicar qué cambió, cómo reproducirlo y qué queda pendiente. Si falta una comprobación, dejar el PR en borrador.
 6. Otro integrante revisa, pide correcciones si hace falta y decide si se integra. El autor o asistente atiende comentarios en la misma rama. Tener comprobaciones aprobadas no sustituye esa revisión.
 
-La excepción autorizada para la carga inicial de la versión 0.1 abarca el prototipo y estas reglas. Los cambios posteriores siguen el flujo normal de PR y revisión. No fusionar, publicar versiones ni cambiar protecciones por iniciativa del asistente.
+La excepción autorizada para este cambio de campaña permite crear el PR sin esperar una revisión adicional, según petición expresa del usuario. Esta excepción se limita a la rama y los cambios descritos en ese PR; los demás cambios siguen el flujo normal de revisión. No cambiar protecciones por iniciativa del asistente.
 
 ## Código, datos e IA
 

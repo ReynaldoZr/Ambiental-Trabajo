@@ -17,14 +17,17 @@
 </section>
 <section id="reto" class="campana">
   <div>
-    <p class="etiqueta">RETO DE LA SEMANA</p>
+    <p class="etiqueta">RETO DE LA SEMANA · {{ tema.periodo }}</p>
     <h2>{{ tema.titulo }}</h2>
     <p>{{ tema.consejo }}</p>
+    <p class="nota">Tres preguntas breves. Cada acierto suma 10 puntos para la competencia amistosa entre unidades académicas.</p>
+    <a href="{{ url_for('campana') }}">Ver campaña y resumen semestral <span aria-hidden="true">→</span></a>
   </div>
   <div class="panel">
     {% if intento %}
       <h3>Reto completado</h3>
-      <p>Acertaste <strong>{{ intento.aciertos }} de {{ tema.preguntas|length }}</strong> y ganaste <strong>{{ intento.aciertos * 10 }} puntos</strong>.</p>
+      <p>Acertaste <strong>{{ intento.aciertos }} de {{ tema.preguntas|length }}</strong> y sumaste <strong>{{ intento.puntos }} puntos</strong>.</p>
+      <p class="nota">El siguiente reto semanal trae un tema nuevo.</p>
     {% else %}
       <form method="post" action="{{ url_for('reto') }}">
         <input type="hidden" name="token_formulario" value="{{ token_formulario }}">
@@ -37,9 +40,30 @@
             {% endfor %}
           </fieldset>
         {% endfor %}
-        <button class="boton" type="submit">Enviar respuestas</button>
+        <label for="facultad">¿Con qué facultad o unidad académica participas?</label>
+        <select id="facultad" name="facultad" required>
+          <option value="">Selecciona una unidad</option>
+          {% for facultad in facultades %}<option>{{ facultad }}</option>{% endfor %}
+        </select>
+        <button class="boton" type="submit">Completar reto</button>
       </form>
     {% endif %}
   </div>
+</section>
+<section class="clasificacion panel" aria-labelledby="clasificacion-titulo">
+  <div>
+    <p class="etiqueta">MARCADOR DE ESTA SEMANA</p>
+    <h2 id="clasificacion-titulo">¿Qué unidad suma más?</h2>
+    <p class="nota">Puntos de las respuestas a este reto. Es un marcador anónimo de demostración, sin premios ni horas obligatorias.</p>
+  </div>
+  {% if clasificacion %}
+    <ol class="lista-puntos">
+      {% for fila in clasificacion %}
+        <li><span class="puesto">{{ loop.index }}</span><span>{{ fila.facultad }}</span><strong>{{ fila.puntos }} pts</strong></li>
+      {% endfor %}
+    </ol>
+  {% else %}
+    <p class="vacio">Todavía no hay participaciones esta semana. ¡Puedes abrir el marcador!</p>
+  {% endif %}
 </section>
 {% endblock %}

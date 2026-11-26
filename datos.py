@@ -22,12 +22,23 @@ CREATE TABLE IF NOT EXISTS reporte (
     estado TEXT NOT NULL DEFAULT 'Pendiente'
         CHECK (estado IN ('Pendiente', 'En proceso', 'Resuelto')),
     observacion TEXT NOT NULL DEFAULT '',
-    creado TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    creado TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    actualizado TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS intento (
     reto TEXT PRIMARY KEY,
     aciertos INTEGER NOT NULL CHECK (aciertos >= 0)
+);
+
+CREATE TABLE IF NOT EXISTS participacion_reto (
+    reto TEXT NOT NULL,
+    participante TEXT NOT NULL,
+    facultad TEXT NOT NULL,
+    aciertos INTEGER NOT NULL CHECK (aciertos >= 0),
+    puntos INTEGER NOT NULL CHECK (puntos >= 0),
+    creado TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (reto, participante)
 );
 """
 
@@ -49,4 +60,10 @@ def iniciar_db(app):
     Path(app.config["DATABASE"]).parent.mkdir(parents=True, exist_ok=True)
     app.teardown_appcontext(cerrar_db)
     with app.app_context():
-        obtener_db().executescript(ESQUEMA)
+        db = obtener_db()
+        db.executescript(ESQUEMA)
+        columnas = {fila["name"] for fila in db.execute("PRAGMA table_info(reporte)")}
+        if "actualizado" not in columnas:
+            db.execute("ALTER TABLE reporte ADD COLUMN actualizado TEXT NOT NULL DEFAULT ''")
+            db.execute("UPDATE reporte SET actualizado = creado WHERE actualizado = ''")
+        db.commit()
