@@ -17,9 +17,9 @@ JaguarVerde es el prototipo académico de Educación Ambiental. Este archivo apl
 3. Implementar solamente el objetivo. Explicar decisiones nuevas en `docs/ACUERDOS.md` y actualizar el README si cambia el uso.
 4. Comprobar el flujo afectado y anotar los resultados reales. Para un cambio en reportes, probar creación, actualización y lectura tras reiniciar. Para un cambio en el reto, probar cálculo de puntos y repetición del intento. Revisar el aspecto en pantalla estrecha cuando cambie la interfaz.
 5. Abrir un PR hacia `main`, enlazar la issue y explicar qué cambió, cómo reproducirlo y qué queda pendiente. Si falta una comprobación, dejar el PR en borrador.
-6. Otro integrante revisa, pide correcciones si hace falta y decide si se integra. El autor o asistente atiende comentarios en la misma rama. Tener comprobaciones aprobadas no sustituye esa revisión.
+6. El usuario es quien revisa y decide si se integra. No exigir ni asignar la aprobación de otro integrante, salvo que el usuario la pida. El autor o asistente atiende los comentarios del usuario en la misma rama. Solo integrar cuando el usuario lo solicite expresamente; no cambiar protecciones del repositorio por iniciativa propia.
 
-La excepción autorizada para este cambio de campaña permite crear el PR sin esperar una revisión adicional, según petición expresa del usuario. Esta excepción se limita a la rama y los cambios descritos en ese PR; los demás cambios siguen el flujo normal de revisión. No cambiar protecciones por iniciativa del asistente.
+El usuario puede autorizar expresamente en cada tarea la publicación o integración de un cambio sin aprobación adicional. Respetar el alcance que indique y no cambiar protecciones del repositorio por iniciativa propia.
 
 ## Código, datos e IA
 

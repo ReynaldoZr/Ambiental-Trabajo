@@ -36,4 +36,4 @@ Anotar la fecha, la fuente o el enlace a la issue, qué cambia, por qué y quié
 - Prompt de EcoReport U. Requisitos de una versión más amplia, de los que se eligió el recorrido básico.
 - [Reglas de la calculadora](https://github.com/ReynaldoZr/AlgebraCalcuadora/blob/main/AGENTS.md). Referencia del flujo de revisión en GitHub.
 
-La petición del usuario autoriza crear este PR sin esperar una aprobación adicional. La excepción corresponde solo a ese cambio; no modifica el proceso para futuras tareas.
+El usuario es quien revisa y decide sobre los cambios. No se debe esperar ni solicitar aprobación adicional de otro integrante, excepto si el usuario la pide. Publicar o integrar cambios cuando el usuario lo autorice expresamente en la tarea; no cambiar protecciones del repositorio por iniciativa propia.
