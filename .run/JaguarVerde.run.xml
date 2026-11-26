@@ -1,5 +1,11 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="JaguarVerde" type="PythonConfigurationType" factoryName="Python">
+    <option name="ENV_FILES" value="" />
+    <option name="INTERPRETER_OPTIONS" value="-X utf8" />
+    <option name="PARENT_ENVS" value="true" />
+    <envs>
+      <env name="PYTHONUNBUFFERED" value="1" />
+    </envs>
     <module name="" />
     <option name="SDK_HOME" value="$PROJECT_DIR$/.venv/Scripts/python.exe" />
     <option name="IS_MODULE_SDK" value="false" />
