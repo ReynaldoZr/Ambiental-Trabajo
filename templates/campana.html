@@ -24,12 +24,15 @@
     </form>
   </div>
   <p class="nota">{{ periodo.etiqueta }} · No se estiman litros ni energía ahorrados; se muestran únicamente registros de la aplicación.</p>
+  {% if resumen.puntos %}
+    <div class="resultado-copa"><span aria-hidden="true">🏆</span><div><strong>{% if periodo.id == periodo_actual %}Unidad al frente{% else %}Líder del semestre{% endif %}: {{ resumen.puntos[0].facultad }}</strong><p>{{ resumen.puntos[0].puntos }} puntos · {% if periodo.id == periodo_actual %}La Copa se define al cierre del periodo.{% else %}Resultado del periodo seleccionado.{% endif %}</p></div></div>
+  {% endif %}
   <div class="metricas">
     <div><strong>{{ resumen.total_reportes }}</strong><span>reportes recibidos</span></div>
     <div><strong>{{ resumen.estados.get('Resuelto', 0) }}</strong><span>resueltos</span></div>
     <div><strong>{{ resumen.estados.get('En proceso', 0) }}</strong><span>en proceso</span></div>
     <div><strong>{{ resumen.estados.get('Pendiente', 0) }}</strong><span>pendientes</span></div>
-    <div><strong>{{ resumen.participacion.envios }}</strong><span>respuestas a retos</span></div>
+        <div><strong>{{ resumen.participacion.envios }}</strong><span>acciones: reto y encuesta</span></div>
     <div><strong>{{ resumen.participacion.puntos }}</strong><span>puntos acumulados</span></div>
   </div>
   <div class="columnas resumen-detalle">
@@ -54,11 +57,11 @@
   <div class="pasos-campana">
     <article class="panel"><span class="numero-paso">01</span><h3>Cada semana · en línea</h3><p>JaguarVerde cambia un reto de tres preguntas sobre agua, energía o residuos. La publicación es automática; no requiere organizar una actividad presencial semanal.</p></article>
     <article class="panel"><span class="numero-paso">02</span><h3>Una actividad por semestre</h3><p>La facultad anfitriona puede sumar un puesto con QR, una búsqueda de buenas prácticas o una mini auditoría voluntaria a una feria o jornada que ya exista en el calendario UAM.</p></article>
-    <article class="panel"><span class="numero-paso">03</span><h3>Cierre de cada semestre</h3><p>Compartir este resumen y reconocer a la unidad más participativa con una mención o espacio para presentar una idea. Los puntos no se cambian por horas ni crean obligaciones laborales.</p></article>
+    <article class="panel"><span class="numero-paso">03</span><h3>Copa JaguarVerde</h3><p>La unidad con más puntos recibe insignia digital, reconocimiento en el Muro y espacio para presentar su idea en el encuentro de cierre. Un kit reutilizable o una planta sería opcional y requiere aprobación de la UAM.</p></article>
   </div>
   <div class="panel sugerencia-evento">
-    <h3>Idea de evento: Ruta JaguarVerde</h3>
-    <p>En equipos y durante una hora, estudiantes recorren un área acordada del campus, encuentran oportunidades de mejora y las registran con un QR. La UAM puede invitar a Mantenimiento y a una facultad anfitriona; el cierre muestra los hallazgos y qué reportes recibieron seguimiento.</p>
+    <h3>Encuentro final: Ruta JaguarVerde</h3>
+    <p>En 45 minutos y junto a una feria UAM existente, la comunidad ve el marcador final, reconoce al equipo ganador y comparte la idea ambiental más útil. La actividad no requiere una organización semanal.</p>
     <p class="nota">El calendario académico, el lugar y la persona que recibiría los reportes se confirman con la universidad antes de anunciar una fecha.</p>
   </div>
 </section>
