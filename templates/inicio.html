@@ -1,51 +1,107 @@
 {% extends "base.html" %}
 {% block contenido %}
-<section class="portada">
-  <div class="presentacion">
-    <p class="etiqueta">EDUCACIÓN AMBIENTAL</p>
-    <h1>Cuidemos<br>el campus<span>.</span></h1>
-    <p>Reporta una fuga, un problema de residuos u otra incidencia ambiental y consulta cómo avanza su atención.</p>
-    <a class="boton claro" href="{{ url_for('reportes') }}">Reportar un problema <span aria-hidden="true">→</span></a>
-  </div>
-  <aside class="impacto">
-    <div class="anillos" aria-hidden="true"></div>
-    <div class="contador"><span class="punto" aria-hidden="true"></span> SEGUIMIENTO</div>
-    <strong>{{ resueltos }}</strong>
-    <span>{{ 'reporte resuelto' if resueltos == 1 else 'reportes resueltos' }}</span>
-    <a href="{{ url_for('reportes', _anchor='seguimiento') }}">Ver reportes <span aria-hidden="true">↗</span></a>
+<div class="tablero-inicio">
+  <section class="bienvenida-inicio" id="bienvenida" aria-labelledby="mensaje-titulo">
+    <p class="etiqueta">{% if estudiante %}HOLA, {{ estudiante.nombre.split()[0]|upper }}{% else %}TU MISIÓN JAGUAR{% endif %}</p>
+    <div class="texto-mision" aria-live="polite" aria-atomic="true">
+      <h1 id="mensaje-titulo">{{ mensaje_diario.titulo }}</h1>
+      <p>{{ mensaje_diario.mensaje }}</p>
+    </div>
+    <div class="practica" data-practica>
+      <strong>{{ modo }} · práctica rápida</strong>
+      {% if modo == 'Detective' %}
+      <h2>Encuentra la pista de desperdicio</h2>
+      {% for pista in ['🌳 Árbol con sombra','💧 Grifo goteando','🚲 Bicicleta aparcada'] %}<button class="boton claro" data-acierto="{{ 1 if loop.index == 2 else 0 }}">{{ pista }}</button>{% endfor %}
+      <p role="status" data-solucion="El goteo indica una posible fuga"></p>
+      {% elif modo == 'Safari' %}
+      <h2>Busca algo que puedas volver a usar</h2>
+      {% for pista in ['Botella rellenable','Vaso desechable','Envoltura'] %}<button class="boton claro" data-acierto="{{ 1 if loop.first else 0 }}">{{ pista }}</button>{% endfor %}
+      <p role="status" data-solucion="Puedes rellenar la botella muchas veces"></p>
+      {% else %}
+      <h2>{{ tema.preguntas[0][0] }}</h2>
+      {% for opcion in tema.preguntas[0][1] %}
+        <button class="boton claro" type="button" data-acierto="{{ 1 if loop.index0 == tema.preguntas[0][2] else 0 }}">{{ opcion }}</button>
+      {% endfor %}
+      <p role="status" data-solucion="{{ tema.preguntas[0][1][tema.preguntas[0][2]] }}"></p>{% endif %}
+    </div>
+    <div class="acciones-bienvenida">
+      {% if intento %}
+        <a class="boton claro" href="{{ url_for('comunidad', _anchor='encuesta') }}">Ir a la encuesta →</a>
+      {% else %}
+        <a class="boton claro" href="#reto">Jugar el reto →</a>
+      {% endif %}
+      <a href="{{ url_for('inicio', _anchor='bienvenida') }}" data-mision-url="{{ url_for('nueva_bienvenida') }}">Otra misión ↻</a>
+    </div>
+  </section>
+  <aside class="panel agenda-inicio" aria-labelledby="agenda-titulo">
+    <div class="agenda-cabeza">
+      <h2 id="agenda-titulo">Próximos eventos</h2>
+      <a href="{{ url_for('agenda') }}">Ver agenda →</a>
+    </div>
+    {% for evento in eventos %}
+      <details class="agenda-evento">
+        <summary>
+          <span><strong>{{ evento.titulo|replace(' · ejemplo', '') }}</strong>
+          <small>{% if evento.es_ejemplo %}Muestra · por confirmar{% else %}{{ evento.fecha_evento[8:] }}/{{ evento.fecha_evento[5:7] }} · {{ evento.lugar }}{% endif %}</small></span>
+        </summary>
+        <p>{{ evento.mensaje }}</p>
+        {% if evento.premio %}<p class="nota">Reconocimiento propuesto: {{ evento.premio }}</p>{% endif %}
+      </details>
+    {% else %}
+      <p class="nota">Aquí aparecerán los eventos que publique administración.</p>
+    {% endfor %}
   </aside>
+</div>
+<section class="atajos-inicio" aria-label="Acciones rápidas">
+  <a class="panel accion-comunidad" href="#reto"><span aria-hidden="true">✳</span><div><h2>Juega</h2><p>Hasta 30 puntos</p></div><strong aria-hidden="true">→</strong></a>
+  <a class="panel accion-comunidad" href="{{ url_for('comunidad', _anchor='encuesta') }}"><span aria-hidden="true">◉</span><div><h2>Vota</h2><p>1 pregunta · +5 puntos</p></div><strong aria-hidden="true">→</strong></a>
+  <a class="panel accion-comunidad" href="{{ url_for('reportes') }}"><span aria-hidden="true">⌖</span><div><h2>Reporta</h2><p>{{ resueltos }} {{ 'caso resuelto' if resueltos == 1 else 'casos resueltos' }}</p></div><strong aria-hidden="true">→</strong></a>
 </section>
+<section class="panel encuesta-panel" id="elegir"><h2>¿Qué jugamos la próxima semana?</h2>
+{% if voto %}<p>Elegiste {{ voto.modo }}. El modo más votado abre la próxima semana.</p>
+{% elif estudiante %}<form class="controles-reto" method="post" action="{{ url_for('elegir_mision') }}">
+<input type="hidden" name="token_formulario" value="{{ token_formulario }}">
+{% for opcion in ['Detective','Duelo','Safari'] %}<button class="boton" name="modo" value="{{ opcion }}">{{ opcion }}</button>{% endfor %}
+</form>{% else %}<a href="{{ url_for('entrada_estudiante') }}">Entrar para elegir</a>{% endif %}</section>
+{% if impacto %}<aside class="panel encuesta-panel"><h2>Último seguimiento del campus</h2><p>{{ impacto.categoria }} · {{ impacto.estado }}</p></aside>{% endif %}
 <section id="reto" class="campana">
   <div>
     <p class="etiqueta">RETO DE LA SEMANA · {{ tema.periodo }}</p>
     <h2>{{ tema.titulo }}</h2>
     <p>{{ tema.consejo }}</p>
-    <p class="nota">Tres preguntas breves. Cada acierto suma 10 puntos para la competencia amistosa entre unidades académicas.</p>
+    <p class="nota">Tres preguntas. Cada respuesta correcta suma 10 puntos; la encuesta semanal suma otros 5.</p>
     <a href="{{ url_for('campana') }}">Ver campaña y resumen semestral <span aria-hidden="true">→</span></a>
   </div>
   <div class="panel">
-    {% if intento %}
+    {% if not estudiante %}
+      <h3>Participa como estudiante</h3>
+      <p>Registra tu nombre, facultad y carrera para responder el reto y sumar puntos a tu unidad.</p>
+      <a class="boton" href="{{ url_for('entrada_estudiante', siguiente='/') }}">Identificarme para participar</a>
+    {% elif intento %}
       <h3>Reto completado</h3>
       <p>Acertaste <strong>{{ intento.aciertos }} de {{ tema.preguntas|length }}</strong> y sumaste <strong>{{ intento.puntos }} puntos</strong>.</p>
       <p class="nota">El siguiente reto semanal trae un tema nuevo.</p>
     {% else %}
-      <form method="post" action="{{ url_for('reto') }}">
+      <form method="post" action="{{ url_for('reto') }}" class="reto-interactivo">
+        <div class="avance-reto" data-avance-reto hidden>
+          <label for="avance-reto">Tu avance <span>0/{{ tema.preguntas|length }}</span></label>
+          <progress id="avance-reto" value="0" max="{{ tema.preguntas|length }}"></progress>
+        </div>
         <input type="hidden" name="token_formulario" value="{{ token_formulario }}">
         {% for pregunta, opciones, correcta in tema.preguntas %}
           {% set numero = loop.index0 %}
-          <fieldset>
+          <fieldset data-pregunta>
             <legend>{{ pregunta }}</legend>
             {% for opcion in opciones %}
               <label class="opcion"><input type="radio" name="respuesta_{{ numero }}" value="{{ loop.index0 }}" required> {{ opcion }}</label>
             {% endfor %}
           </fieldset>
         {% endfor %}
-        <label for="facultad">¿Con qué facultad o unidad académica participas?</label>
-        <select id="facultad" name="facultad" required>
-          <option value="">Selecciona una unidad</option>
-          {% for facultad in facultades %}<option>{{ facultad }}</option>{% endfor %}
-        </select>
-        <button class="boton" type="submit">Completar reto</button>
+        <div class="controles-reto">
+          <button class="boton boton-secundario" type="button" data-anterior hidden>Anterior</button>
+          <button class="boton" type="button" data-siguiente hidden>Siguiente →</button>
+          <button class="boton" type="submit">Ver mi resultado</button>
+        </div>
       </form>
     {% endif %}
   </div>
@@ -54,7 +110,7 @@
   <div>
     <p class="etiqueta">MARCADOR DE ESTA SEMANA</p>
     <h2 id="clasificacion-titulo">¿Qué unidad suma más?</h2>
-    <p class="nota">Puntos de las respuestas a este reto. Es un marcador anónimo de demostración, sin premios ni horas obligatorias.</p>
+    <p class="nota">El reto y la encuesta suman puntos. Al cierre del semestre, la unidad líder gana la Copa JaguarVerde y un reconocimiento en el Muro.</p>
   </div>
   {% if clasificacion %}
     <ol class="lista-puntos">
@@ -65,5 +121,9 @@
   {% else %}
     <p class="vacio">Todavía no hay participaciones esta semana. ¡Puedes abrir el marcador!</p>
   {% endif %}
+</section>
+<section class="panel trofeo-resumen">
+  <div><p class="etiqueta">META DEL SEMESTRE · COPA JAGUARVERDE</p><h2>Tu próxima respuesta puede mover el marcador.</h2><p>La unidad ganadora recibe insignia digital y reconocimiento en el encuentro de cierre.</p>{% if puntos_semestre %}<p class="lider-semestre">Al frente: <strong>{{ puntos_semestre[0].facultad }}</strong> · {{ puntos_semestre[0].puntos }} pts</p>{% else %}<p class="lider-semestre">Marcador listo para la primera unidad que participe.</p>{% endif %}</div>
+  <a class="boton" href="{{ url_for('comunidad') }}">Votar y ver mi progreso →</a>
 </section>
 {% endblock %}

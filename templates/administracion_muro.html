@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block titulo %}Gestionar muro{% endblock %}
+{% block contenido %}
+<header class="intro">
+  <p class="etiqueta">CONTENIDO PARA LA COMUNIDAD</p>
+  <h1>Gestionar el Muro</h1>
+  <p>Publica mensajes breves, avisos, desafíos y eventos. Puedes programar cuándo aparecen y ocultar una publicación cuando ya no sea vigente.</p>
+</header>
+<section class="panel editor-muro" aria-labelledby="publicar-titulo">
+  <p class="etiqueta">NUEVA PUBLICACIÓN</p><h2 id="publicar-titulo">¿Qué quieres compartir?</h2>
+  {% if error %}<p class="aviso error" role="alert">{{ error }}</p>{% endif %}
+  <form class="formulario formulario-muro" method="post">
+    <input type="hidden" name="token_formulario" value="{{ token_formulario }}">
+    <label for="tipo">Tipo</label>
+    <select id="tipo" name="tipo" required>
+      {% for tipo in tipos %}<option value="{{ tipo }}" {% if datos.tipo == tipo %}selected{% endif %}>{{ tipo }}</option>{% endfor %}
+    </select>
+    <label for="titulo">Título</label>
+    <input id="titulo" name="titulo" minlength="3" maxlength="90" required value="{{ datos.titulo or '' }}" placeholder="Ej. Reto: una semana sin desechables">
+    <label for="mensaje">Mensaje</label>
+    <textarea id="mensaje" name="mensaje" rows="4" minlength="5" maxlength="500" required placeholder="Cuenta en pocas líneas qué debe saber o hacer la comunidad.">{{ datos.mensaje or '' }}</textarea>
+    <label for="fecha_publicacion">Mostrar desde</label>
+    <input id="fecha_publicacion" name="fecha_publicacion" type="date" required value="{{ datos.fecha_publicacion or fecha_hoy }}">
+    <div class="campos-evento" data-campos-evento>
+      <p class="nota">Completa estos datos solo si elegiste “Evento”.</p>
+      <label for="fecha_evento">Fecha del evento</label>
+      <input id="fecha_evento" name="fecha_evento" type="date" value="{{ datos.fecha_evento or '' }}">
+      <label for="lugar">Lugar</label>
+      <input id="lugar" name="lugar" maxlength="120" value="{{ datos.lugar or '' }}" placeholder="Ej. Plaza central">
+      <label for="actividad">Actividad</label>
+      <select name="actividad" id="actividad">{% for tipo in ['Campus','Cine','Deporte','Voluntariado','Trueque'] %}<option>{{ tipo }}</option>{% endfor %}</select>
+      <label for="horas">Horas laborales autorizadas por ayudar en la organización</label>
+      <select name="horas" id="horas">{% for h in range(9) %}<option value="{{ h }}">{{ h or 'Sin horas' }}</option>{% endfor %}</select>
+      <label for="premio">Reconocimiento o premio propuesto (requiere confirmación de la UAM)</label>
+      <input id="premio" name="premio" maxlength="160" value="{{ datos.premio or '' }}" placeholder="Ej. Insignia digital y mención al equipo ganador">
+    </div>
+    <button class="boton" type="submit">Publicar en el Muro</button>
+  </form>
+</section>
+<section class="muro-seccion" aria-labelledby="gestionar-publicaciones">
+  <div class="seccion-cabeza"><div><p class="etiqueta">CONTENIDO GUARDADO</p><h2 id="gestionar-publicaciones">Publicaciones</h2></div><span class="contador-admin">{{ publicaciones|length }}</span></div>
+  {% if publicaciones %}
+    <div class="tarjetas-muro">
+      {% for publicacion in publicaciones %}
+        <article class="panel tarjeta-muro {% if not publicacion.activa %}tarjeta-archivada{% endif %}">
+          <div class="ficha-cabeza"><span class="etiqueta-tipo">{{ publicacion.tipo }}{% if publicacion.es_ejemplo %} · Muestra{% endif %}</span><span class="estado {{ 'resuelto' if publicacion.activa else 'pendiente' }}">{{ 'Visible' if publicacion.activa else 'Oculta' }}</span></div>
+          <h3>{{ publicacion.titulo }}</h3><p>{{ publicacion.mensaje }}</p>
+          <p class="meta">Desde {{ publicacion.fecha_publicacion }}{% if publicacion.tipo == 'Evento' %} · {{ publicacion.fecha_evento }} · {{ publicacion.lugar }}{% endif %}</p>
+          {% if publicacion.premio %}<p class="premio-evento">Propuesta para el evento: {{ publicacion.premio }}</p>{% endif %}
+          <form method="post" action="{{ url_for('alternar_publicacion', publicacion_id=publicacion.id) }}">
+            <input type="hidden" name="token_formulario" value="{{ token_formulario }}">
+            <button class="boton boton-secundario" type="submit">{{ 'Ocultar' if publicacion.activa else 'Volver a mostrar' }}</button>
+          </form>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}<p class="vacio">Aún no hay publicaciones. Crea la primera arriba.</p>{% endif %}
+</section>
+{% endblock %}

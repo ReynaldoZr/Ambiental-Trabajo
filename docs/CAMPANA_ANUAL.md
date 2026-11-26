@@ -8,9 +8,9 @@ Mantener la educación ambiental presente sin exigir organización semanal a la 
 
 | Momento | Actividad | Quién puede apoyarla | Esfuerzo esperado |
 | --- | --- | --- | --- |
-| Cada semana | Publicar automáticamente un reto de tres preguntas sobre agua, energía o residuos y un consejo práctico. | Equipo estudiante prepara el banco inicial; Educación Ambiental valida el contenido antes de usarlo. | Sin evento ni coordinación semanal. |
+| Cada semana | Reto automático de tres preguntas y encuesta rápida. El reto da 10 puntos por acierto; votar da 5 puntos a la unidad. | El equipo prepara y revisa un banco pequeño de contenido; las preguntas rotan sin publicación manual semanal. | Participar toma aproximadamente un minuto; sin evento semanal. |
 | Una vez por semestre | Ruta JaguarVerde: puesto con QR y recorrido voluntario de una hora en un área acordada para encontrar oportunidades de mejora y enviar reportes. | Una facultad anfitriona, Vida Estudiantil y un contacto de Mantenimiento. | Integrada a una feria, jornada o actividad UAM existente. |
-| Cierre de cada semestre | Publicar resumen de reportes, estado de seguimiento, temas frecuentes y participación por unidad. Compartir una idea destacada. | Equipo del proyecto prepara los datos; la universidad revisa qué información puede publicar. | Un resumen digital; reconocimiento simbólico opcional. |
+| Cierre de cada semestre | Publicar el resumen, cerrar la Copa JaguarVerde y presentar una idea estudiantil destacada junto con una actividad UAM existente. | El equipo prepara los resultados; la universidad confirma el espacio y el reconocimiento. | Encuentro breve; insignia y mención digital. Cualquier premio físico requiere aprobación y patrocinio. |
 
 ## Calendario ejemplo
 
@@ -22,10 +22,10 @@ Las fechas y los periodos enero-junio / julio-diciembre son un ejemplo del proto
 ## Evento: Ruta JaguarVerde
 
 1. La facultad anfitriona elige un área que la universidad apruebe para el recorrido.
-2. Los equipos escanean un QR, completan una misión o responden una pregunta breve y observan oportunidades de mejora sin manipular equipos, residuos u objetos peligrosos.
+2. Los equipos escanean un QR, completan una misión o responden una pregunta breve y observan oportunidades de mejora durante un recorrido de 45 minutos, sin manipular equipos, residuos u objetos peligrosos.
 3. Si detectan una incidencia, la registran en JaguarVerde con categoría, ubicación y foto segura. No hace falta duplicar reportes ya existentes.
 4. Mantenimiento revisa los casos por el flujo normal; el evento no promete reparaciones inmediatas.
-5. El cierre comparte qué reportes recibieron seguimiento y qué ideas se proponen. Se reconoce la colaboración, sin asignar ni cambiar puntos por horas de trabajo, beca o servicio social.
+5. El cierre comparte qué reportes recibieron seguimiento y qué ideas se proponen. La unidad con mayor puntaje recibe la Copa JaguarVerde simbólica, insignia digital y mención. La UAM puede aprobar un kit reutilizable o una planta como premio; no se asignan horas laborales, becas ni servicio social.
 
 ## Qué puede decir el resumen semestral
 

@@ -12,9 +12,28 @@
     <div class="ancho barra">
       <a class="marca" href="{{ url_for('inicio') }}"><span class="sello" aria-hidden="true">J</span> Jaguar<span>Verde</span></a>
       <nav aria-label="Principal">
-        {% for ruta, nombre in [('inicio', 'Inicio'), ('campana', 'Campaña'), ('reportes', 'Reportes'), ('administracion', 'Administración')] %}
+        {% for ruta, nombre in [('inicio', 'Inicio'), ('agenda', 'Agenda'), ('comunidad', 'Comunidad'), ('campana', 'Campaña')] %}
           <a href="{{ url_for(ruta) }}" {% if request.endpoint == ruta %}aria-current="page"{% endif %}>{{ nombre }}</a>
         {% endfor %}
+        {% if admin_activo %}
+          <a href="{{ url_for('administracion') }}" {% if request.endpoint == 'administracion' %}aria-current="page"{% endif %}>Administración</a>
+          <a href="{{ url_for('administrar_muro') }}" {% if request.endpoint in ('administrar_muro', 'alternar_publicacion') %}aria-current="page"{% endif %}>Gestionar muro</a>
+          <form class="salida-nav" method="post" action="{{ url_for('salir_administrador') }}">
+            <input type="hidden" name="token_formulario" value="{{ token_formulario }}">
+            <button class="enlace-nav" type="submit">Salir de administración</button>
+          </form>
+        {% elif estudiante %}
+          <a href="{{ url_for('reportes') }}" {% if request.endpoint == 'reportes' %}aria-current="page"{% endif %}>Mis reportes</a>
+          <span class="usuario-nav">{{ estudiante.nombre }}</span>
+          <form class="salida-nav" method="post" action="{{ url_for('salir_estudiante') }}">
+            <input type="hidden" name="token_formulario" value="{{ token_formulario }}">
+            <button class="enlace-nav" type="submit">Cambiar estudiante</button>
+          </form>
+        {% else %}
+          <a href="{{ url_for('reportes') }}" {% if request.endpoint == 'reportes' %}aria-current="page"{% endif %}>Reportes</a>
+          <a href="{{ url_for('entrada_estudiante') }}" {% if request.endpoint == 'entrada_estudiante' %}aria-current="page"{% endif %}>Participar</a>
+          <a href="{{ url_for('login_administrador') }}" {% if request.endpoint == 'login_administrador' %}aria-current="page"{% endif %}>Acceso administrador</a>
+        {% endif %}
       </nav>
     </div>
   </header>
@@ -25,5 +44,6 @@
     {% block contenido %}{% endblock %}
   </main>
   <footer class="pie ancho"><strong>JaguarVerde</strong><span>Prototipo académico · v{{ version }}</span></footer>
+  <script src="{{ url_for('static', filename='interaccion.js') }}" defer></script>
 </body>
 </html>

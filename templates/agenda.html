@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block titulo %}Agenda{% endblock %}
+{% block contenido %}
+<header class="intro"><p class="etiqueta">VIDA EN EL CAMPUS</p><h1>¿Cuál es tu próximo plan?</h1></header>
+<div class="agenda-filtros">
+<label>Actividad <select id="categoria-agenda"><option>Todas</option>{% for t in ['Campus','Cine','Deporte','Voluntariado','Trueque'] %}<option>{{ t }}</option>{% endfor %}</select></label>
+<label>Mostrar <select id="vista-agenda"><option value="todo">Todos los planes</option><option value="horas">Con horas por colaborar</option><option value="guardado">Mis planes guardados</option></select></label>
+</div>
+<div class="tarjetas-muro">
+{% for e in eventos %}
+<article class="panel plan" data-plan="{{ e.id }}" data-tipo="{{ e.actividad }}" data-horas="{{ e.horas }}">
+<span class="etiqueta-tipo">{{ e.actividad }}</span>
+<h2>{{ e.titulo|replace(' · ejemplo','') }}</h2>
+<p>{{ e.mensaje }}</p>
+<p class="meta">{{ 'Muestra · fecha y lugar por confirmar' if e.es_ejemplo else e.fecha_evento ~ ' · ' ~ e.lugar }}</p>
+<strong>{% if e.horas %}{{ e.horas }} h por colaborar{{ ' · ejemplo' if e.es_ejemplo else '' }}{% else %}Participación sin horas{% endif %}</strong>
+<div class="controles-reto"><button class="boton" data-guardar aria-pressed="false">Me interesa</button><button class="boton boton-secundario" data-compartir>Compartir</button></div>
+<output></output>
+</article>{% endfor %}
+</div><p id="sin-planes" hidden>No hay planes con esta selección.</p>
+{% endblock %}

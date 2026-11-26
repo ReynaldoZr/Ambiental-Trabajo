@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block titulo %}Comunidad{% endblock %}
+{% block contenido %}
+<header class="intro intro-comunidad">
+  <p class="etiqueta">MURO JAGUARVERDE · {{ tema.periodo }}</p>
+  <h1>¿Qué dejamos mejor hoy?</h1>
+  <p>Un reto corto, una opinión y un campus que mejora con ideas de todos.</p>
+</header>
+<section class="mensaje-bienvenida mensaje-comunidad" aria-labelledby="mensaje-titulo">
+  <div class="mensaje-icono" aria-hidden="true">✦</div>
+  <div><p class="etiqueta">TU MENSAJE DE HOY</p><h2 id="mensaje-titulo">{{ mensaje_diario.titulo }}</h2><p>{{ mensaje_diario.mensaje }}</p></div>
+</section>
+<section class="comunidad-acciones" aria-label="Acciones rápidas">
+  <a class="panel accion-comunidad" href="{{ url_for('inicio', _anchor='reto') }}"><span aria-hidden="true">✳</span><div><h2>Juega el reto</h2><p>3 preguntas · hasta 30 puntos</p></div><strong aria-hidden="true">→</strong></a>
+  <a class="panel accion-comunidad" href="#encuesta"><span aria-hidden="true">◉</span><div><h2>Tu opinión suma</h2><p>Vota · +5 puntos para tu unidad</p></div><strong aria-hidden="true">→</strong></a>
+  <a class="panel accion-comunidad" href="{{ url_for('reportes') }}"><span aria-hidden="true">⌖</span><div><h2>Ojos Jaguar</h2><p>Reporta algo que necesite atención</p></div><strong aria-hidden="true">→</strong></a>
+</section>
+
+<section class="panel encuesta-panel" id="encuesta" aria-labelledby="encuesta-titulo">
+  <div class="seccion-cabeza"><div><p class="etiqueta">PREGUNTA RÁPIDA · +5 PUNTOS POR VOTAR</p><h2 id="encuesta-titulo">{{ encuesta.pregunta }}</h2></div><span class="contador-admin">{{ resultados_encuesta|sum(attribute='votos') }} votos</span></div>
+  {% if not estudiante %}
+    <p class="nota">Tu voto ayuda a elegir próximos retos y actividades.</p>
+    <a class="boton" href="{{ url_for('entrada_estudiante', siguiente='/comunidad') }}">Entrar y votar</a>
+    <div class="resultados-encuesta resultados-publicos">
+      {% for opcion in resultados_encuesta %}<div class="resultado-opcion"><div class="resultado-texto"><span>{{ opcion.texto }}</span><strong>{{ opcion.votos }}</strong></div><div class="barra-fondo"><span style="width: {{ opcion.porcentaje }}%"></span></div></div>{% endfor %}
+    </div>
+  {% elif voto %}
+    <p class="nota">¡Gracias por participar! Así van las respuestas:</p>
+    <div class="resultados-encuesta">
+      {% for opcion in resultados_encuesta %}
+        <div class="resultado-opcion"><div class="resultado-texto"><span>{{ opcion.texto }}</span><strong>{{ opcion.votos }}</strong></div><div class="barra-fondo"><span style="width: {{ opcion.porcentaje }}%"></span></div></div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <form method="post" action="{{ url_for('responder_encuesta') }}" class="voto-rapido">
+      <input type="hidden" name="token_formulario" value="{{ token_formulario }}">
+      {% for opcion in encuesta.opciones %}<label class="opcion-voto"><input type="radio" name="opcion" value="{{ loop.index0 }}" required><span>{{ opcion }}</span></label>{% endfor %}
+      <button class="boton" type="submit">Votar y sumar 5 puntos</button>
+    </form>
+  {% endif %}
+</section>
+
+{% if estudiante %}
+<section class="muro-seccion" aria-labelledby="insignias-titulo">
+  <div class="seccion-cabeza"><div><p class="etiqueta">TU PROGRESO · {{ estudiante.nombre }}</p><h2 id="insignias-titulo">Insignias Jaguar</h2></div><strong class="puntos-personales">{{ puntos_personales }} pts esta semana</strong></div>
+  <div class="insignias-grid">
+    {% for insignia in insignias %}<article class="panel insignia {% if insignia.obtenida %}insignia-lista{% endif %}"><span aria-hidden="true">{{ insignia.icono }}</span><div><h3>{{ insignia.nombre }}</h3><p>{{ 'Desbloqueada' if insignia.obtenida else 'Sigue participando' }}</p></div><strong>{{ insignia.avance }}</strong></article>{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="panel trofeo-panel" aria-labelledby="trofeo-titulo">
+  <div class="trofeo-icono" aria-hidden="true">🏆</div>
+  <div><p class="etiqueta">META DEL SEMESTRE</p><h2 id="trofeo-titulo">Copa JaguarVerde</h2>
+    <p>La unidad con más puntos al cierre recibe una insignia digital, reconocimiento en el Muro y espacio para presentar su idea en el encuentro de cierre.</p>
+    <p class="nota">La UAM podría sumar un premio reutilizable o una planta si lo aprueba. No se prometen horas laborales ni beneficios académicos.</p>
+  </div>
+</section>
+
+<section class="muro-seccion" aria-labelledby="marcador-titulo">
+  <div class="seccion-cabeza"><div><p class="etiqueta">RETO + ENCUESTA</p><h2 id="marcador-titulo">Marcador de esta semana</h2></div><a href="{{ url_for('campana') }}">Ver resumen semestral →</a></div>
+  {% if clasificacion %}<ol class="lista-puntos panel lista-marcador">{% for fila in clasificacion %}<li><span class="puesto">{{ loop.index }}</span><span>{{ fila.facultad }}</span><strong>{{ fila.puntos }} pts</strong></li>{% endfor %}</ol>
+  {% else %}<p class="vacio">Tu unidad puede inaugurar el marcador. Responde el reto o vota en la encuesta.</p>{% endif %}
+</section>
+<section class="muro-seccion" aria-labelledby="lideres-semestre">
+  <div class="seccion-cabeza"><div><p class="etiqueta">CAMINO A LA COPA</p><h2 id="lideres-semestre">Clasificación del semestre</h2></div><span class="contador-admin">Top 3</span></div>
+  {% if clasificacion_semestre %}<ol class="lista-puntos panel lista-marcador">{% for fila in clasificacion_semestre %}<li><span class="puesto">{{ loop.index }}</span><span>{{ fila.facultad }}</span><strong>{{ fila.puntos }} pts</strong></li>{% endfor %}</ol>
+  {% else %}<p class="vacio">El semestre empieza desde cero: la primera participación puede poner a tu unidad en el tablero.</p>{% endif %}
+</section>
+
+<section class="muro-seccion" id="eventos" aria-labelledby="eventos-titulo">
+  <div class="seccion-cabeza"><h2 id="eventos-titulo">Agenda de eventos</h2><span class="contador-admin">{{ eventos|length }}</span></div>
+  {% if eventos %}
+    <div class="tarjetas-muro">
+      {% for evento in eventos %}
+        <article class="panel tarjeta-muro evento-muro">
+          <span class="etiqueta-tipo">{{ 'Muestra · por confirmar' if evento.es_ejemplo else 'Evento' }}</span>
+          <h3>{{ evento.titulo|replace(' · ejemplo', '') }}</h3>
+          <p>{{ evento.mensaje }}</p>
+          {% if not evento.es_ejemplo %}
+            <p class="meta"><time datetime="{{ evento.fecha_evento }}">{{ evento.fecha_evento }}</time> · {{ evento.lugar }}</p>
+          {% endif %}
+          {% if evento.premio %}<p class="premio-evento">Reconocimiento propuesto: {{ evento.premio }}</p>{% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}<p class="vacio">Cuando administración publique una actividad, aparecerá aquí.</p>{% endif %}
+</section>
+<section class="muro-seccion" aria-labelledby="publicaciones-titulo">
+  <div class="seccion-cabeza"><div><p class="etiqueta">LO NUEVO</p><h2 id="publicaciones-titulo">Avisos y desafíos</h2></div><span class="contador-admin">{{ publicaciones|length }}</span></div>
+  {% if publicaciones %}
+    <div class="filtros-muro" data-filtros role="group" aria-label="Filtrar publicaciones" hidden>
+      <button type="button" data-filtro="" aria-pressed="true">Todo</button>
+      <button type="button" data-filtro="Aviso" aria-pressed="false">Avisos</button>
+      <button type="button" data-filtro="Desafío" aria-pressed="false">Desafíos</button>
+    </div>
+    <p class="nota" data-filtro-vacio role="status" hidden>Por ahora no hay publicaciones de este tipo.</p>
+    <div class="tarjetas-muro">
+      {% for publicacion in publicaciones %}
+        <article class="panel tarjeta-muro" data-publicacion="{{ publicacion.tipo }}">
+          <span class="etiqueta-tipo">{{ publicacion.tipo }}{% if publicacion.es_ejemplo %} · Muestra{% endif %}</span>
+          <h3>{{ publicacion.titulo }}</h3>
+          <p>{{ publicacion.mensaje }}</p>
+          {% if publicacion.tipo == 'Desafío' %}<a class="enlace-accion" href="{{ url_for('inicio', _anchor='reto') }}">Jugar el reto →</a>{% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}<p class="vacio">No hay avisos nuevos. Vuelve pronto o participa en el reto de esta semana.</p>{% endif %}
+</section>
+{% endblock %}

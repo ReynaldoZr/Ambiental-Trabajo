@@ -4,11 +4,17 @@
 <header class="intro">
   <p class="etiqueta">REPORTE ESTUDIANTIL</p>
   <h1>Reporta un problema</h1>
-  <p>Indica qué pasó y dónde para que mantenimiento pueda encontrarlo.</p>
+  <p>Hola, {{ estudiante.nombre }}. Indica qué pasó y dónde para que mantenimiento pueda encontrarlo.</p>
 </header>
 <div class="columnas">
   <section class="panel" aria-labelledby="nuevo">
     <h2 id="nuevo">Nuevo reporte</h2>
+    <p class="nota">¿Solo quieres conocer el formulario? Prueba un ejemplo y no lo envíes como un caso real.</p>
+    <div class="ejemplos-reporte" aria-label="Ejemplos de reporte">
+      {% for ejemplo in ejemplos %}
+        <button class="boton-ejemplo" type="button" data-ejemplo-titulo="{{ ejemplo.titulo }}" data-ejemplo-categoria="{{ ejemplo.categoria }}" data-ejemplo-ubicacion="{{ ejemplo.ubicacion }}" data-ejemplo-descripcion="{{ ejemplo.descripcion }}">{{ ejemplo.titulo }} <span>Usar ejemplo</span></button>
+      {% endfor %}
+    </div>
     {% if error %}<p class="aviso error" role="alert">{{ error }}</p>{% endif %}
     <form method="post" enctype="multipart/form-data" class="formulario">
       <input type="hidden" name="token_formulario" value="{{ token_formulario }}">
@@ -32,7 +38,7 @@
     </form>
   </section>
   <section id="seguimiento">
-    <h2>Seguimiento</h2>
+    <h2>Mis reportes</h2>
     {% for reporte in reportes %}
       <article class="panel ficha">
         {% include "_ficha.html" %}

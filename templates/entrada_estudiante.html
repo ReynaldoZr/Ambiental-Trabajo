@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block titulo %}Participar como estudiante{% endblock %}
+{% block contenido %}
+<header class="intro">
+  <p class="etiqueta">ESPACIO ESTUDIANTIL</p>
+  <h1>Identifícate para participar</h1>
+  <p>Con estos datos podrás responder retos y consultar solamente los reportes que envíes desde este navegador.</p>
+</header>
+<section class="panel acceso-panel">
+  {% if error %}<p class="aviso error" role="alert">{{ error }}</p>{% endif %}
+  <form class="formulario" method="post">
+    <input type="hidden" name="token_formulario" value="{{ token_formulario }}">
+    <input type="hidden" name="siguiente" value="{{ siguiente }}">
+    <label for="nombre">Nombre completo</label>
+    <input id="nombre" name="nombre" required minlength="2" maxlength="100" autocomplete="name" value="{{ datos.get('nombre', '') }}">
+    <label for="facultad">Facultad o unidad académica</label>
+    <select id="facultad" name="facultad" required>
+      <option value="">Selecciona tu unidad</option>
+      {% for facultad in facultades %}
+        <option value="{{ facultad }}" {% if datos.get('facultad') == facultad %}selected{% endif %}>{{ facultad }}</option>
+      {% endfor %}
+    </select>
+    <label for="carrera">Carrera</label>
+    <input id="carrera" name="carrera" required minlength="2" maxlength="100" value="{{ datos.get('carrera', '') }}" placeholder="Ej. Ingeniería Industrial">
+    <p class="nota">No se pide contraseña, correo ni carnet. En esta demostración, los datos son autodeclarados y no verifican identidad. Al usar otro navegador, tendrás que volver a identificarte.</p>
+    <button class="boton" type="submit">Entrar al espacio estudiantil</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block titulo %}Acceso administrador{% endblock %}
+{% block contenido %}
+<header class="intro">
+  <p class="etiqueta">ACCESO PRIVADO</p>
+  <h1>Administración</h1>
+  <p>Ingresa con la cuenta local de administración para revisar todos los reportes y estudiantes registrados.</p>
+</header>
+<section class="panel acceso-panel">
+  {% if error %}<p class="aviso error" role="alert">{{ error }}</p>{% endif %}
+  <form class="formulario" method="post">
+    <input type="hidden" name="token_formulario" value="{{ token_formulario }}">
+    <label for="usuario">Usuario</label>
+    <input id="usuario" name="usuario" required autocomplete="username">
+    <label for="contrasena">Contraseña</label>
+    <input id="contrasena" name="contrasena" type="password" required autocomplete="current-password">
+    <p class="nota">El acceso inicial se guarda localmente en <code>instance/acceso_administrador.txt</code>. No compartas ese archivo.</p>
+    <button class="boton" type="submit">Entrar a administración</button>
+  </form>
+</section>
+{% endblock %}

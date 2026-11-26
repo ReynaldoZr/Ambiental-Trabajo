@@ -1,6 +1,6 @@
-# JaguarVerde · versión 0.2
+# JaguarVerde · versión 0.5 local
 
-Prototipo web para Educación Ambiental. Permite reportar problemas ambientales del campus con foto, consultar su estado, completar retos semanales sobre agua, energía y residuos, ver un marcador anónimo por unidad académica y revisar un resumen seleccionable por semestre.
+Prototipo web local para Educación Ambiental. Incluye mensajes de bienvenida, retos y encuestas rápidas, insignias, marcador por unidad y una Copa JaguarVerde de cierre de semestre. También permite enviar reportes y seguir su estado. Administración programa avisos y eventos desde el Muro.
 
 ## Abrir en IntelliJ IDEA
 
@@ -37,31 +37,51 @@ Si `python` no se reconoce al preparar el entorno, instala Python 3.12 y activa 
 
 Usa información inventada y una foto de prueba; no subas datos personales ni imágenes de personas.
 
-1. En **Inicio**, contesta las tres preguntas del reto y elige una facultad. Comprueba que se muestre el puntaje y que aumente el marcador de esa semana.
-2. Intenta contestar el mismo reto otra vez desde el mismo navegador. El sistema debe indicar que ya participaste en ese reto semanal.
-3. En **Reportes**, crea un reporte ficticio con una foto JPG, PNG o WebP de hasta 5 MB. Anota el número del caso que aparece.
-4. En **Administración**, busca ese caso, cambia su estado a **En proceso** o **Resuelto** y guarda una observación.
-5. Regresa a **Reportes**, busca el caso y confirma que aparecen el nuevo estado, la observación y la fecha de actualización.
-6. Abre **Campaña**, cambia el periodo y revisa el resumen de reportes, participación y puntos.
-7. Reinicia la aplicación y confirma que el reporte y el marcador siguen guardados.
+1. En **Participar**, registra un estudiante de prueba con nombre, facultad y carrera.
+2. Abre **Inicio**. La bienvenida cambia al volver y puedes pulsar **Otra misión**. A su lado, abre una tarjeta para ver los detalles del evento. **Ver agenda** abre `/agenda`, donde puedes filtrar eventos por actividad u horas y guardar tus favoritos en el navegador.
+3. En **Inicio**, contesta el reto semanal: cada acierto da 10 puntos. Vota en la encuesta semanal de Comunidad para sumar 5 puntos más. Cada perfil tiene un intento y un voto por semana.
+4. En **Reportes**, crea un reporte ficticio con una foto JPG, PNG o WebP de hasta 5 MB.
+5. Usa **Cambiar estudiante** y registra un segundo perfil de prueba. En **Mis reportes** debe aparecer solo lo enviado desde ese segundo perfil, no el reporte del primero.
+6. Cambia de perfil nuevamente y entra por **Acceso administrador** con el usuario y la contraseña local indicados abajo.
+7. En **Administración**, revisa estudiantes y reportes. Abre **Gestionar muro** para crear un mensaje, aviso, desafío o evento; asigna fecha de publicación y, para eventos, fecha, lugar, tipo de actividad, horas autorizadas por colaborar y reconocimiento propuesto. Oculta o reactiva publicaciones cuando sea necesario.
+8. Cierra la sesión de administración y visita **Comunidad** para ver las publicaciones visibles. Abre **Campaña** para revisar las cifras agregadas.
 
-El reto se limita a un intento por navegador mediante una cookie. Borrar la cookie o usar otro navegador permite volver a participar, por eso los puntos son demostrativos y no certifican identidad, horas ni asistencia.
+La identificación estudiantil es autodeclarada y no verifica que una persona pertenezca a la universidad. Borrar la cookie o crear otro registro permite participar más de una vez; por eso los puntos son demostrativos y no certifican identidad, horas ni asistencia. La administración requiere una contraseña local; su hash se guarda fuera de Git.
+
+## Incentivo de participación
+
+- Cada respuesta correcta del reto suma **10 puntos**; votar en la encuesta semanal suma **5**, sin respuestas incorrectas.
+- Insignias personales: **Primer reto**, **Racha verde** (tres retos), **Voz del campus** (tres encuestas) y **Ojos Jaguar** (primer reporte).
+- Al cierre del semestre, la unidad líder gana la **Copa JaguarVerde**: insignia digital, mención en el Muro y espacio para presentar una idea en un encuentro integrado a una actividad UAM existente.
+- Un kit reutilizable o una planta puede proponerse como premio físico, pero solo se anuncia si la UAM lo aprueba. Los puntos no se canjean por horas, becas ni servicios.
+
+La agenda agrega eventos de muestra de campus, cine, deporte, trueque y voluntariado por única vez, aun si el Muro ya tiene otras publicaciones. Se identifican como propuestas por confirmar y se pueden ocultar desde Administración. Los eventos vigentes publicados por administración aparecen primero. Los ejemplos de reportes rellenan el formulario para enseñar el formato; hay que sustituirlos por observaciones reales antes de enviar.
+
+## Accesos del prototipo
+
+- **Estudiantes:** abre `http://127.0.0.1:5000/estudiantes/entrar`, escribe nombre completo, facultad y carrera, y luego podrás responder retos y enviar reportes. La sesión se conserva en ese navegador hasta 30 días; **Cambiar estudiante** permite usar otro perfil en el mismo equipo.
+- **Administración:** abre `http://127.0.0.1:5000/administracion/entrar`. El único usuario inicial es `admin`. Al preparar por primera vez la versión local, la contraseña aleatoria se guarda en `instance/acceso_administrador.txt`. El archivo se excluye de Git; no lo envíes ni lo compartas.
+- **Comunidad:** abre `http://127.0.0.1:5000/comunidad` para ver el mensaje de esta visita, los avisos, desafíos, eventos próximos y el marcador semanal.
+- **Gestionar el Muro:** inicia sesión como administrador y abre `http://127.0.0.1:5000/administracion/muro`. Programa mensajes, avisos y desafíos; en eventos indica fecha, lugar y reconocimiento propuesto. Las publicaciones pueden ocultarse y volver a mostrarse.
+- Administración muestra los datos personales de los registros estudiantiles y todos los reportes. Los estudiantes solo ven los reportes enviados desde su perfil. La página Campaña presenta cifras agregadas.
+
+Este es un prototipo local para una demostración con datos ficticios. No hay verificación de cuentas estudiantiles, recuperación de contraseña ni publicación de red. Antes de usarlo con estudiantes reales, la universidad debe aprobar el propósito, los datos solicitados, privacidad, responsables y forma de validar identidades.
 
 ## Datos locales
 
-La base de demostración se guarda en `instance/jaguarverde.sqlite`. La aplicación crea la carpeta y la base al iniciar; si ya existe una base de la versión 0.1, conserva los reportes y prepara el nuevo campo de seguimiento. Las fotos se guardan dentro de esa base. La clave de sesión también se crea en la carpeta local `instance/`. Estos archivos no se suben a GitHub.
+La base de demostración se guarda en `instance/jaguarverde.sqlite`. La aplicación crea la carpeta y la base al iniciar; si ya existe una base anterior, conserva sus datos y agrega las tablas de encuesta y publicaciones. Si el Muro está vacío, añade una muestra etiquetada con fecha relativa al día de inicio. Las fotos se guardan dentro de la base. La clave de sesión, el hash del administrador y el acceso inicial se crean localmente en `instance/`; esos archivos no se suben a GitHub.
 
-Para empezar una demostración limpia, usa una copia nueva del proyecto o pide al equipo que te ayude a reiniciar los datos. No compartas la carpeta `instance/`: contiene la base local y las fotos de prueba.
+Para empezar una demostración limpia, usa una copia nueva del proyecto o pide al equipo que te ayude a reiniciar los datos. No compartas la carpeta `instance/`: contiene la base local, las fotos de prueba y el acceso local de administración.
 
 ## Recorrido para la defensa
 
 1. Desde Inicio, elige **Reportar un problema**. Crea un caso ficticio con una foto JPG, PNG o WebP de hasta 5 MB.
 2. En **Administración**, revisa la foto, cambia el estado y guarda una observación.
-3. Vuelve a **Reportes** para consultar el estado y la fecha de actualización. En Inicio, completa el reto y elige una unidad académica; cada acierto suma 10 puntos al marcador de esa semana.
-4. Abre **Campaña** para ver los datos del semestre elegido y la propuesta de actividades universitarias.
+3. Vuelve a **Reportes** para consultar el estado y la fecha de actualización. En **Inicio**, completa el reto semanal; en **Comunidad**, responde la encuesta para sumar 5 puntos más.
+4. Abre **Campaña** para ver el resumen y la unidad que va al frente de la Copa JaguarVerde en el periodo elegido.
 5. Reinicia la aplicación. Los reportes, sus estados y las participaciones del reto siguen guardados.
 
-La base local se crea en `instance/jaguarverde.sqlite` y queda fuera de Git. Incluye fotos normalizadas y participaciones del reto. Una cookie aleatoria permite que el mismo navegador participe una vez por reto semanal; no se guarda nombre ni correo. Sin inicio de sesión ni validación institucional, el marcador es una demostración: no acredita identidad, asistencia ni horas. Usa datos ficticios.
+La base local se crea en `instance/jaguarverde.sqlite` y queda fuera de Git. Incluye fotos normalizadas, perfiles estudiantiles y participaciones del reto. Una cookie firmada conserva el perfil seleccionado en ese navegador por hasta 30 días. No hay verificación de identidad estudiantil; el marcador es demostrativo y no acredita asistencia ni horas. Usa datos ficticios.
 
 El resumen muestra reportes por estado y categoría, y puntos de retos por unidad académica. No estima ahorros de agua o energía porque todavía no existe un método validado para calcularlos. El calendario sugerido de retos, actividades y cierres semestrales está en [el plan de campaña](docs/CAMPANA_ANUAL.md). Los periodos enero-junio y julio-diciembre son una convención del prototipo; deben ajustarse al calendario académico de la UAM antes de un piloto.
 

@@ -4,12 +4,36 @@
 <header class="intro">
   <p class="etiqueta">MANTENIMIENTO</p>
   <h1>Administración</h1>
-  <p>Consulta los reportes y actualiza el estado de su atención.</p>
+  <p>Sesión privada de administración. Consulta reportes y participantes; este contenido solo aparece tras iniciar sesión.</p>
+  <a class="boton" href="{{ url_for('administrar_muro') }}">Publicar mensaje, reto o evento</a>
 </header>
+<section class="panel bloque-admin" aria-labelledby="participantes-titulo">
+  <h2 id="participantes-titulo">Estudiantes registrados <span class="contador-admin">{{ estudiantes|length }}</span></h2>
+  {% if estudiantes %}
+    <div class="tabla-contenedor">
+      <table>
+        <thead><tr><th>Nombre</th><th>Facultad</th><th>Carrera</th><th>Registro</th></tr></thead>
+        <tbody>
+          {% for persona in estudiantes %}
+            <tr><td>{{ persona.nombre }}</td><td>{{ persona.facultad }}</td><td>{{ persona.carrera }}</td><td>{{ persona.creado[:10] }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="vacio">Todavía no hay estudiantes registrados.</p>
+  {% endif %}
+</section>
+<h2 class="titulo-reportes-admin">Todos los reportes <span class="contador-admin">{{ reportes|length }}</span></h2>
 <div class="gestion">
   {% for reporte in reportes %}
     <article class="panel ficha" id="reporte-{{ reporte.id }}">
       {% include "_ficha.html" %}
+      {% if reporte.nombre_estudiante %}
+        <p class="meta autor-reporte">Reportó {{ reporte.nombre_estudiante }} · {{ reporte.facultad_estudiante }} · {{ reporte.carrera_estudiante }}</p>
+      {% else %}
+        <p class="meta autor-reporte">Reporte anterior al registro de estudiantes</p>
+      {% endif %}
       <form class="formulario actualizar" method="post" action="{{ url_for('actualizar', reporte_id=reporte.id) }}">
         <input type="hidden" name="token_formulario" value="{{ token_formulario }}">
         <label for="estado-{{ reporte.id }}">Estado</label>
