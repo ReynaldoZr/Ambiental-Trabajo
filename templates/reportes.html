@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block titulo %}Reportes{% endblock %}
+{% block contenido %}
+<header class="intro">
+  <p class="etiqueta">REPORTE ESTUDIANTIL</p>
+  <h1>Reporta un problema</h1>
+  <p>Indica qué pasó y dónde para que mantenimiento pueda encontrarlo.</p>
+</header>
+<div class="columnas">
+  <section class="panel" aria-labelledby="nuevo">
+    <h2 id="nuevo">Nuevo reporte</h2>
+    {% if error %}<p class="aviso error" role="alert">{{ error }}</p>{% endif %}
+    <form method="post" enctype="multipart/form-data" class="formulario">
+      <input type="hidden" name="token_formulario" value="{{ token_formulario }}">
+      <label for="titulo">Título</label>
+      <input id="titulo" name="titulo" required maxlength="80" placeholder="Ej. Fuga en lavamanos" value="{{ datos.get('titulo', '') }}">
+      <label for="categoria">Categoría</label>
+      <select id="categoria" name="categoria" required>
+        <option value="">Selecciona una categoría</option>
+        {% for categoria in categorias %}
+          <option {% if datos.get('categoria') == categoria %}selected{% endif %}>{{ categoria }}</option>
+        {% endfor %}
+      </select>
+      <label for="ubicacion">Ubicación</label>
+      <input id="ubicacion" name="ubicacion" required maxlength="100" placeholder="Ej. Edificio A, baño del primer piso" value="{{ datos.get('ubicacion', '') }}">
+      <label for="descripcion">Descripción</label>
+      <textarea id="descripcion" name="descripcion" rows="3" required maxlength="350">{{ datos.get('descripcion', '') }}</textarea>
+      <label for="foto">Fotografía</label>
+      <input type="file" id="foto" name="foto" accept="image/jpeg,image/png,image/webp" aria-describedby="formatos" required>
+      <small id="formatos">JPG, PNG o WebP. Hasta 5 MB.</small>
+      <button class="boton" type="submit">Guardar reporte</button>
+    </form>
+  </section>
+  <section id="seguimiento">
+    <h2>Seguimiento</h2>
+    {% for reporte in reportes %}
+      <article class="panel ficha">
+        {% include "_ficha.html" %}
+        {% if reporte.observacion %}
+          <p class="respuesta"><strong>Respuesta de mantenimiento</strong>{{ reporte.observacion }}</p>
+        {% endif %}
+      </article>
+    {% else %}
+      <p class="vacio">Todavía no hay reportes en la demostración.</p>
+    {% endfor %}
+  </section>
+</div>
+{% endblock %}

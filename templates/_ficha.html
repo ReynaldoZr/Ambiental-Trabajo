@@ -1,0 +1,8 @@
+<div class="ficha-cabeza">
+  <span class="meta">Caso #{{ reporte.id }} · {{ reporte.categoria }}</span>
+  <span class="estado {{ {'Pendiente':'pendiente', 'En proceso':'proceso', 'Resuelto':'resuelto'}[reporte.estado] }}">{{ reporte.estado }}</span>
+</div>
+<h3>{{ reporte.titulo }}</h3>
+<p><strong>{{ reporte.ubicacion }}</strong></p>
+<p>{{ reporte.descripcion }}</p>
+<a class="foto" href="{{ url_for('ver_foto', reporte_id=reporte.id) }}">Ver fotografía del caso #{{ reporte.id }} <span aria-hidden="true">↗</span></a>

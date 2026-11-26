@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block titulo %}Administración{% endblock %}
+{% block contenido %}
+<header class="intro">
+  <p class="etiqueta">MANTENIMIENTO</p>
+  <h1>Administración</h1>
+  <p>Consulta los reportes y actualiza el estado de su atención.</p>
+</header>
+<div class="gestion">
+  {% for reporte in reportes %}
+    <article class="panel ficha" id="reporte-{{ reporte.id }}">
+      {% include "_ficha.html" %}
+      <form class="formulario actualizar" method="post" action="{{ url_for('actualizar', reporte_id=reporte.id) }}">
+        <input type="hidden" name="token_formulario" value="{{ token_formulario }}">
+        <label for="estado-{{ reporte.id }}">Estado</label>
+        <select id="estado-{{ reporte.id }}" name="estado">
+          {% for estado in estados %}
+            <option {% if reporte.estado == estado %}selected{% endif %}>{{ estado }}</option>
+          {% endfor %}
+        </select>
+        <label for="observacion-{{ reporte.id }}">Observación</label>
+        <textarea id="observacion-{{ reporte.id }}" name="observacion" rows="2" maxlength="350">{{ reporte.observacion }}</textarea>
+        <button class="boton" type="submit">Guardar actualización</button>
+      </form>
+    </article>
+  {% else %}
+    <p class="vacio">Todavía no hay casos para atender. <a href="{{ url_for('reportes') }}">Crear un reporte</a>.</p>
+  {% endfor %}
+</div>
+{% endblock %}

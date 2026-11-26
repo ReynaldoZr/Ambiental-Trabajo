@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Inicio{% endblock %} · JaguarVerde</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+</head>
+<body>
+  <a class="salto" href="#contenido">Ir al contenido</a>
+  <header class="cabecera">
+    <div class="ancho barra">
+      <a class="marca" href="{{ url_for('inicio') }}"><span class="sello" aria-hidden="true">J</span> Jaguar<span>Verde</span></a>
+      <nav aria-label="Principal">
+        {% for ruta, nombre in [('inicio', 'Inicio'), ('reportes', 'Reportes'), ('administracion', 'Administración')] %}
+          <a href="{{ url_for(ruta) }}" {% if request.endpoint == ruta %}aria-current="page"{% endif %}>{{ nombre }}</a>
+        {% endfor %}
+      </nav>
+    </div>
+  </header>
+  <main id="contenido" class="ancho contenido">
+    {% for tipo, mensaje in get_flashed_messages(with_categories=true) %}
+      <p class="aviso {{ tipo }}" role="status">{{ mensaje }}</p>
+    {% endfor %}
+    {% block contenido %}{% endblock %}
+  </main>
+  <footer class="pie ancho"><strong>JaguarVerde</strong><span>Prototipo académico · v{{ version }}</span></footer>
+</body>
+</html>

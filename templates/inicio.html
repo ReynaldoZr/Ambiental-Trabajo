@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block contenido %}
+<section class="portada">
+  <div class="presentacion">
+    <p class="etiqueta">EDUCACIÓN AMBIENTAL</p>
+    <h1>Cuidemos<br>el campus<span>.</span></h1>
+    <p>Reporta una fuga, un problema de residuos u otra incidencia ambiental y consulta cómo avanza su atención.</p>
+    <a class="boton claro" href="{{ url_for('reportes') }}">Reportar un problema <span aria-hidden="true">→</span></a>
+  </div>
+  <aside class="impacto">
+    <div class="anillos" aria-hidden="true"></div>
+    <div class="contador"><span class="punto" aria-hidden="true"></span> SEGUIMIENTO</div>
+    <strong>{{ resueltos }}</strong>
+    <span>{{ 'reporte resuelto' if resueltos == 1 else 'reportes resueltos' }}</span>
+    <a href="{{ url_for('reportes', _anchor='seguimiento') }}">Ver reportes <span aria-hidden="true">↗</span></a>
+  </aside>
+</section>
+<section id="reto" class="campana">
+  <div>
+    <p class="etiqueta">RETO DE LA SEMANA</p>
+    <h2>{{ tema.titulo }}</h2>
+    <p>{{ tema.consejo }}</p>
+  </div>
+  <div class="panel">
+    {% if intento %}
+      <h3>Reto completado</h3>
+      <p>Acertaste <strong>{{ intento.aciertos }} de {{ tema.preguntas|length }}</strong> y ganaste <strong>{{ intento.aciertos * 10 }} puntos</strong>.</p>
+    {% else %}
+      <form method="post" action="{{ url_for('reto') }}">
+        <input type="hidden" name="token_formulario" value="{{ token_formulario }}">
+        {% for pregunta, opciones, correcta in tema.preguntas %}
+          {% set numero = loop.index0 %}
+          <fieldset>
+            <legend>{{ pregunta }}</legend>
+            {% for opcion in opciones %}
+              <label class="opcion"><input type="radio" name="respuesta_{{ numero }}" value="{{ loop.index0 }}" required> {{ opcion }}</label>
+            {% endfor %}
+          </fieldset>
+        {% endfor %}
+        <button class="boton" type="submit">Enviar respuestas</button>
+      </form>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
